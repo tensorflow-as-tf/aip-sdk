@@ -42,7 +42,7 @@ Predicting on image...
 Sending InferenceResponse.
 ```
 
-## 4) [Download](https://search.maven.org/remotecontent?filepath=com/palantir/aip/processing/aip-test-orchestrator/0.0.2/aip-test-orchestrator-0.0.2.tar) and run the `aip-test-orchestrator`
+## 4) [Download](https://repo1.maven.org/maven2/com/palantir/aip/processing/aip-test-orchestrator/v1.0/aip-test-orchestrator-v1.0.tar) and run the `aip-test-orchestrator`
 
 The `aip-test-orchestrator` is a really simple AIP simulator that repeatedly sends the same image to the processor. Use it liberally
 to ensure that your processor receives requests correctly, responds to them in the right format, and can handle large loads
