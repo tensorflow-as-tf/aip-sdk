@@ -1,0 +1,48 @@
+# NVIDIA Jetpack 4.3 is required and should already be installed on the host before building this Docker image.
+# Installing NVIDIA Jetpack 4.3 using `apt`: https://docs.nvidia.com/jetson/jetpack/install-jetpack/index.html#install-jetpack
+
+# automatically pulls the linux arm64v8 version of ubuntu:18.04
+FROM ubuntu:18.04
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+# NVIDIA Jetpack 4.3 installs CUDA 10.0
+ENV PATH="/usr/local/cuda-10.0/bin:${PATH}"
+ENV LD_LIBRARY_PATH="/usr/lib/aarch64-linux-gnu/tegra:/usr/local/cuda-10.0/targets/aarch64-linux/lib:${LD_LIBRARY_PATH}"
+
+WORKDIR /jetson_4.3_processor
+
+# copy just the tf1.15 wheel for installation for now
+COPY jetson4.3/tf1.15_gpu_arm_wheel/tensorflow_gpu-1.15.0+nv20.1-cp36-cp36m-linux_aarch64.whl tf1.15_gpu_arm_wheel/
+
+# update is very important
+RUN apt-get update -qq \
+  && apt-get install -y apt-utils \
+  && apt-get upgrade -y \
+  && apt-get install -y pkg-config curl \
+  # system packages required by Tensorflow
+  && apt-get install -y libhdf5-100 libhdf5-serial-dev hdf5-tools libhdf5-dev zlib1g-dev zip libjpeg8-dev liblapack-dev libblas-dev gfortran \
+  # install and upgrade pip3
+  && apt-get install -y python3-pip python3-tk python3-h5py cython3 \
+  && apt-get install -y build-essential clang libpython3-dev libblocksruntime-dev libpython3.6 libxml2 \
+  && pip3 install --no-cache-dir pip testresources setuptools==49.6.0 Cython==0.29.21 \
+  # python packages required by Tensorflow
+  && pip3 install --no-cache-dir numpy==1.19.4 future==0.18.2 mock==3.0.5 h5py==2.10.0 keras_preprocessing==1.1.1 keras_applications==1.0.8 gast==0.2.2 futures pybind11 image Pillow \
+  && pip3 install --no-cache-dir protobuf==3.17.3 mypy-protobuf grpcio==1.38.1 grpcio-tools==1.38.1 \
+  # install Tensorflow 1.15 from Aarch64 wheel
+  && pip3 install --no-cache-dir tf1.15_gpu_arm_wheel/tensorflow_gpu-1.15.0+nv20.1-cp36-cp36m-linux_aarch64.whl \
+  && apt-get clean \
+  && rm -rf /var/lib/apt/lists/*
+
+# copy all other files now so we can edit them without Docker re-installing everything above
+COPY jetson4.3/ .
+COPY ./proto proto
+COPY download_and_compile_protos.sh .
+
+# compile the AIP processing service v2 protocol buffer interfaces
+RUN chmod +x ./download_and_compile_protos.sh
+RUN ./download_and_compile_protos.sh
+
+# the server will wait for inference requests on port 50051
+EXPOSE 50051
+CMD ["python3", "inference_server.py", "50051"]
