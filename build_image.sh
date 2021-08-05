@@ -13,5 +13,4 @@ if [ -z "${f}" ] || [ -z "${t}" ]
     usage
 fi
 
-# modify this to add sudo in front if needed
-docker build . -f "${f}" -t "${t}"
+sudo docker build . -f "${f}" -t "${t}"

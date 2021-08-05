@@ -12,5 +12,4 @@ if [ -z "${t}" ]
     usage
 fi
 
-# add sudo here if needed
-docker run -v /usr:/usr -v /dev/shm/aip/images:/dev/shm/aip/images --rm --runtime=nvidia --network=host -it "${t}"
+sudo docker run -v /usr:/usr -v /dev/shm/aip/images:/dev/shm/aip/images --rm --runtime=nvidia --network=host -it "${t}"

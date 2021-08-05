@@ -19,7 +19,7 @@ COPY jetson4.3/tf1.15_gpu_arm_wheel/tensorflow_gpu-1.15.0+nv20.1-cp36-cp36m-linu
 RUN apt-get update -qq \
   && apt-get install -y apt-utils \
   && apt-get upgrade -y \
-  && apt-get install -y pkg-config \
+  && apt-get install -y pkg-config curl \
   # system packages required by Tensorflow
   && apt-get install -y libhdf5-100 libhdf5-serial-dev hdf5-tools libhdf5-dev zlib1g-dev zip libjpeg8-dev liblapack-dev libblas-dev gfortran \
   # install and upgrade pip3
