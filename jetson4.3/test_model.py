@@ -3,8 +3,8 @@ import time
 import utils
 from model import InferenceModel
 
-FROZEN_GRAPH_PATH = "/jetson_4.3_processor/synthetic_truck_detector_graph_tf1.15.pb"
-IMAGE_PATH = "/jetson_4.3_processor/0-325658917-325658917.png"
+FROZEN_GRAPH_PATH = "/jetson_4.3_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb"
+IMAGE_PATH = "/jetson_4.3_processor/tree_test_image.png"
 
 model = InferenceModel(FROZEN_GRAPH_PATH)
 image = utils.read_png_or_tiff(IMAGE_PATH)

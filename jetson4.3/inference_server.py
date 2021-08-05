@@ -18,7 +18,8 @@ import utils
 from model import InferenceModel
 
 PORT = 50051
-FROZEN_GRAPH_PATH = "/jetson_4.3_processor/synthetic_truck_detector_graph_tf1.15.pb"
+# change this path to your own TF 1.15 frozen inference graph
+FROZEN_GRAPH_PATH = "/jetson_4.3_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb"
 
 class InferenceConfiguration(api_conf_grpc.ConfigurationServiceServicer):
     def Configure(
@@ -46,7 +47,8 @@ class InferenceConfiguration(api_conf_grpc.ConfigurationServiceServicer):
 
 class InferenceServer(api_proc_grpc.ProcessingServiceServicer):
     def __init__(self, thread_pool, inference_model):
-        self.class_names = {"1": "truck"}
+        # specify your own dictionary of class ids to names here
+        self.class_names = {"391": "tree"}
         self.thread_pool = thread_pool
         self.inference_model = inference_model
 
