@@ -95,7 +95,7 @@ Orchestrator received inference response for frame id <frame id>:
 
 This will perform inference a few times on a test image and print the output predictions and inference times.
 
-### 4) Run the processor on port 50051.
+### 4) Run the processor on port 50051 (default)
 ```bash
 ./start_jetson_container.sh -t myjetsonprocessor:1.0.0
 ```
