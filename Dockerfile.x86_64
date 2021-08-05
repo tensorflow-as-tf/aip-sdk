@@ -16,18 +16,18 @@ RUN apt-get update -qq \
   && apt-get clean \
   && rm -rf /var/lib/apt/lists/*
 
-WORKDIR /test-harness/
+WORKDIR /x86_64_processor
 
 EXPOSE 50051
 
-COPY model/ ./model/
+COPY x86_64/model/ ./model/
 
-COPY resources/ ./resources/
+COPY x86_64/resources/ ./resources/
 RUN source resources/install-python-packages.sh
 
 COPY proto/ ./proto/
 COPY download_and_compile_protos.sh .
 RUN ./download_and_compile_protos.sh
 
-COPY inference_server.py .
+COPY x86_64/inference_server.py .
 CMD ["python3", "inference_server.py", "50051"]
