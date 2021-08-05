@@ -15,7 +15,7 @@ for i in range(5):
     output = model.run_inference(image)
     end = time.time()
     logs.append("Inference %d completed in %s secs (%s ms)." %
-                (i+1, end-start, int((end-start)*1000)))
+                (i + 1, end - start, int((end - start) * 1000)))
 
 print("Inference results:")
 print(output)

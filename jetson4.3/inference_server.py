@@ -72,7 +72,7 @@ class InferenceServer(api_proc_grpc.ProcessingServiceServicer):
         inference_results = self.predict_on_image(
             request.frame.image.png_image)
         end = time.time()
-        print("Done in seconds:" + str(end-start))
+        print("Done in seconds:" + str(end - start))
         return self.create_response(inference_results, request)
 
     def create_response(self, inference_results, request):
