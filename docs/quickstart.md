@@ -1,29 +1,21 @@
 # Quickstart
 
-## 1) Clone the AIP SDK source code from the [Github repository](https://github.com/palantir/aip-sdk).
+## x86 64 bit processor
 
-## 2) Build the docker image using the following command:
+### 1) Clone the AIP SDK source code from the [Github repository](https://github.com/palantir/aip-sdk)
+
+### 2) Build the processor
 ```bash
-cd <path to aip-sdk repository>
-docker build --no-cache -t testplanemodel:1.0.0 .
+./build_image.sh -f Dockerfile.x86_64 -t myx86processor:1.0.0
 ```
 
-## 3) Run the docker image with the following flags. This will start a processor on port 50051.
+### 3) Run the processor on port 50051 (default)
+x86 64 bit processor:
 ```bash
-docker run -it --rm -v /tmp:/tmp -p 50051:50051 testplanemodel:1.0.0
+./start_x86_64_container.sh -t myx86processor:1.0.0
 ```
 
-### Understanding the flags
-```
-Required:
--v /tmp:/tmp mounts the hosts "/tmp" folder to "/tmp" in the container. It is the default location where aip orchestrator saves images for the processor to read from. The directory can be changed by specifying the --images-dir flag when running the aip-orchestrator. Just remember to mount that folder here so the processor can read images!
--p 50051:50051 makes port 50051 in the container listen to port 50051 on the host. The aip orchestrator will send requests to port 50051, which will make its way into the container and reach the processor listening on the same port.
-
-Optional but highly recommended:
---rm will delete the container once it has exited.
-```
-
-### Expected prints after successful initialization
+#### Expected prints after successful initialization
 
 1) It will download a PyTorch model from Detectron2's model zoo:
 `model_final_f6e8b1.pkl: 243MB [01:13, 3.32MB/s]`
@@ -42,7 +34,7 @@ Predicting on image...
 Sending InferenceResponse.
 ```
 
-## 4) [Download](https://repo1.maven.org/maven2/com/palantir/aip/processing/aip-test-orchestrator/v1.4/aip-test-orchestrator-v1.4.tar) and run the `aip-test-orchestrator`
+### 4) [Download](https://repo1.maven.org/maven2/com/palantir/aip/processing/aip-test-orchestrator/v1.4/aip-test-orchestrator-v1.4.tar) and run the `aip-test-orchestrator`
 
 The `aip-test-orchestrator` is a really simple AIP simulator that repeatedly sends the same image to the processor. Use it liberally
 to ensure that your processor receives requests correctly, responds to them in the right format, and can handle large loads
@@ -87,3 +79,27 @@ Orchestrator received inference response for frame id <frame id>:
 <list of inferences>
 ----------- End response for frame id <frame id> -----------
 ```
+
+## Jetson processor
+
+### 1) Clone the AIP SDK source code from the [Github repository](https://github.com/palantir/aip-sdk)
+
+### 2) Build the processor (will take a while)
+```bash
+./build_image.sh -f Dockerfile.jetson43 -t myjetsonprocessor:1.0.0
+```
+
+### 3) Test the processor
+```bash
+./test_jetson_inference.sh -t myjetsonprocessor:1.0.0
+```
+
+This will perform inference a few times on a test image and print the output predictions and inference times.
+
+## 4) Run the processor on port 50051.
+```bash
+./start_jetson_container.sh -t myjetsonprocessor:1.0.0
+```
+
+Once it has successfully started, you can use the real AIP to send it requests. The jetson processor does not work with the orchestrator.
+

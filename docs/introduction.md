@@ -14,29 +14,25 @@ The general way to use AIP is:
 Processors can be added to and removed from an enabled (live) pipeline, with AIP handling all the frame routing logic behind the scenes.
 
 # Getting Started with an AIP Processor
-The AIP SDK contains a fully-functional processor that uses PyTorch to perform plane detection. You can build the Docker image and run it out-of-the-box. Refer to the [Quickstart](https://palantir.github.io/aip-sdk/quickstart) for simple steps to get the sample processor up and running, and to test it in action.
+The AIP SDK contains two fully-functional processors. One uses PyTorch to perform plane detection and runs on an x86 64 bit machine. The other uses a model trained on the OpenImages v4 dataset (so it can detect a lot of common things) and runs on an NVIDIA Jetson AGX Xavier with JetPack 4.3. You can build these Docker images and run them out-of-the-box. Refer to the [Quickstart](https://palantir.github.io/aip-sdk/quickstart) for simple steps to get the sample processors up and running, and to test them in action.
 
-Below are the contents of the SDK:
+Below are the main contents of the SDK:
 ```
-- inference_server.py (contains main processor logic)
-- Dockerfile (contains instructions to build the docker image)
-- generate_protos.sh (contains simple bash commands to compile the proto files in the proto folder)
-- model (contains a pre-trained model and config files, pulled from Detectron2's model zoo)
-    - Base-RCNN-FPN.yaml
-    - faster_rcnn_R_101_FPN_3x.yaml
-    - model_final_f6e8b1.pkl
-    - README.md
-- proto (contains the latest AIP gRPC interface proto files)
-    - __init__.py
-    - README.md
-- resources (contains a script that is executed during docker image build)
-    - install-python-packages.sh
+- jetson4.3 (contains core files for the jetson processor)
+- x86_64 (contains core files for the x86 64 bit processor)
+- Dockerfile.jetson43 (to build the jetson4.3 processor)
+- Dockerfile.x86_64 (to build the x86_64 processor)
+- download_and_compile_protos.sh (downloads proto files from Maven Central and compiles them)
+- build_image.sh (helper shell script to build either one of the processors)
+- test_jetson_inference.sh (helper shell script to test the jetson processor by running inference on an image)
+- start_jetson_container.sh (helper shell script to start the jetson processor)
+- start_x86_64_container.sh (helper shell script to start the x86 64 bit processor)
 - LICENSE
 - README.md
 ```
 
 # Customizing the sample processor to your own needs
-To customize the sample processor, first you need to understand the major components that make it all work. Read on to better understand different parts of the implementation.
+To customize the sample processor, first you need to understand the major components that make it all work. Read on to better understand different parts of the implementation. We use the x86 processor here as the example, but processors generally work the same regardless of which platform they are run on.
 
 ## Implement Infer method
 Implement Infer method in `inference_server.py`. This is the primary handler that should encapsulate inference logic. For example, it may make an external API call to a running model, or may invoke a locally running model. The argument is an `InferenceRequest`, which contains the image to run the model on and additional metadata if available. The expected return type is an `InferenceResponse` which contains results of model prediction on the image. Please refer to the proto file for the structures of these data types. They are pasted below for your easy reference, but note that the proto file is the ultimate source of truth for the latest structure.
