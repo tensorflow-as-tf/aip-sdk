@@ -10,7 +10,6 @@
 ```
 
 ### 3) Run the processor on port 50051 (default)
-x86 64 bit processor:
 ```bash
 ./start_x86_64_container.sh -t myx86processor:1.0.0
 ```
@@ -51,14 +50,14 @@ cd aip-test-orchestrator-<version>
 ./bin/aip-test-orchestrator
 ```
 
-### Optional flags
+#### Optional flags
 ```
 --shared-images-dir (default /tmp): The directory path that frames should be written to and shared with the processor.
 --uri (default grpc://localhost:50051): The URI of the inference processor to connect to.
 --rate (default 0.2): The number of frames per second to send to the processor (can be a decimal).
 ```
 
-### Expected print statements
+#### Expected print statements
 ```
 Orchestrator: running
 Frames per second: <rate>
@@ -96,7 +95,7 @@ Orchestrator received inference response for frame id <frame id>:
 
 This will perform inference a few times on a test image and print the output predictions and inference times.
 
-## 4) Run the processor on port 50051.
+### 4) Run the processor on port 50051.
 ```bash
 ./start_jetson_container.sh -t myjetsonprocessor:1.0.0
 ```
