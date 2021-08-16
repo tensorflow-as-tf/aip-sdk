@@ -19,7 +19,7 @@ from model import InferenceModel
 
 PORT = 50051
 # change this path to your own TF 1.15 frozen inference graph
-FROZEN_GRAPH_PATH = "/jetson_4.6_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb"
+FROZEN_GRAPH_PATH = "/jetson_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb"
 
 
 class InferenceConfiguration(api_conf_grpc.ConfigurationServiceServicer):

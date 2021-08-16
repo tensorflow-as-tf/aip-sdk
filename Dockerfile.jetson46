@@ -4,7 +4,7 @@
 FROM nvcr.io/nvidia/l4t-ml:r32.6.1-py3
 
 ARG DEBIAN_FRONTEND=noninteractive
-WORKDIR /jetson_4.6_processor
+WORKDIR /jetson_processor
 # update is very important
 RUN apt-get update -qq && python3 -m pip install grpcio grpcio-tools mypy-protobuf
 

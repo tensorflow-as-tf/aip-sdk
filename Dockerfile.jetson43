@@ -10,7 +10,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 ENV PATH="/usr/local/cuda-10.0/bin:${PATH}"
 ENV LD_LIBRARY_PATH="/usr/lib/aarch64-linux-gnu/tegra:/usr/local/cuda-10.0/targets/aarch64-linux/lib:${LD_LIBRARY_PATH}"
 
-WORKDIR /jetson_4.3_processor
+WORKDIR /jetson_processor
 
 # copy just the tf1.15 wheel for installation for now
 COPY jetson/tf1.15_gpu_arm_wheel/tensorflow_gpu-1.15.0+nv20.1-cp36-cp36m-linux_aarch64.whl tf1.15_gpu_arm_wheel/
