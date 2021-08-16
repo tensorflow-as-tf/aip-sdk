@@ -9,7 +9,7 @@ WORKDIR /jetson_4.6_processor
 RUN apt-get update -qq && python3 -m pip install grpcio grpcio-tools mypy-protobuf
 
 # copy all other files now so we can edit them without Docker re-installing everything above
-COPY jetson4.6/ .
+COPY jetson/ .
 COPY ./proto proto
 COPY download_and_compile_protos.sh .
 
