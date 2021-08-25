@@ -5,7 +5,7 @@ Jump to the [Introduction](https://palantir.github.io/aip-sdk/introduction) for 
 The AIP SDK contains three fully-functional processors. 
 One uses PyTorch to perform plane detection and runs on an x86 64 bit machine. 
 The other two use a model trained on the OpenImages v4 dataset (so it can detect a lot of common things) 
-and runs on an NVIDIA Jetson AGX Xavier. The first of the two is configured to run with JetPack 4.3,
+and runs on an NVIDIA Jetson AGX Xavier. Of these last two processors that use the OpenImages model, one is configured to run with JetPack 4.3,
 whereas the second is configured to run with JetPack 4.6
 You can build these Docker images and run them out-of-the-box.
 
