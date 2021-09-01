@@ -45,4 +45,4 @@ RUN ./download_and_compile_protos.sh
 
 # the server will wait for inference requests on port 50051
 EXPOSE 50051
-CMD ["python3", "inference_server.py", "50051"]
+ENTRYPOINT ["python3", "inference_server.py"]

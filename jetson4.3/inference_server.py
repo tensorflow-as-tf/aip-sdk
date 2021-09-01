@@ -3,6 +3,7 @@
 """
 
 import sys
+import argparse
 from concurrent.futures import ThreadPoolExecutor
 
 import time
@@ -16,9 +17,33 @@ from proto import processing_service_v2_pb2_grpc as api_proc_grpc
 import utils
 from model import InferenceModel
 
-PORT = 50051
-# change this path to your own TF 1.15 frozen inference graph
-FROZEN_GRAPH_PATH = "/jetson_4.3_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb"
+def parse_class(s):
+    """
+    Parse a key, value pair, separated by '='
+
+    On the command line (argparse) a declaration will typically look like:
+        foo=hello
+    or
+        foo="hello world"
+    """
+    items = s.split('=')
+    key = items[0].strip() # we remove blanks around keys, as is logical
+    if len(items) > 1:
+        # rejoin the rest:
+        value = '='.join(items[1:])
+    return (key, value)
+
+def parse_classes(items):
+    """
+    Parse a series of key-value pairs and return a dictionary
+    """
+    d = {}
+
+    if items:
+        for item in items:
+            key, value = parse_class(item)
+            d[key] = value
+    return d
 
 
 class InferenceConfiguration(api_conf_grpc.ConfigurationServiceServicer):
@@ -46,9 +71,9 @@ class InferenceConfiguration(api_conf_grpc.ConfigurationServiceServicer):
 
 
 class InferenceServer(api_proc_grpc.ProcessingServiceServicer):
-    def __init__(self, thread_pool, inference_model):
+    def __init__(self, class_names, thread_pool, inference_model):
         # specify your own dictionary of class ids to names here
-        self.class_names = {"391": "tree"}
+        self.class_names = class_names
         self.thread_pool = thread_pool
         self.inference_model = inference_model
 
@@ -113,10 +138,25 @@ class InferenceServer(api_proc_grpc.ProcessingServiceServicer):
 
 
 def main():
-    thread_pool = ThreadPoolExecutor(max_workers=8)
-    inference_model = InferenceModel(FROZEN_GRAPH_PATH)
 
-    srv = server(thread_pool, maximum_concurrent_rpcs=8)
+    parser = argparse.ArgumentParser(description = "Setup an inference server")
+    parser.add_argument('--port', '-p', type=int, default='50051')
+    parser.add_argument('--thread', '-t',type=int, default='8')
+    parser.add_argument('--model', '-m', type=str, default='/jetson_4.3_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb')
+    parser.add_argument('--detect', '-d',
+        metavar="KEY=VALUE",
+        nargs='+',
+        default=["391=Tree"],
+        help="Configure the server to return detections of the given classes."
+            "Classes are identified by their openimage class number, and are given a human"
+            "readable name. e.g. '391=Tree'.")
+    args = parser.parse_args()
+    class_names = parse_classes(args.detect)
+
+    thread_pool = ThreadPoolExecutor(max_workers=args.thread)
+    inference_model = InferenceModel(args.model)
+
+    srv = server(args.class_name, thread_pool, maximum_concurrent_rpcs=args.thread)
     api_conf_grpc.add_ConfigurationServiceServicer_to_server(
         InferenceConfiguration(), srv
     )
@@ -128,10 +168,11 @@ def main():
         print("Error while initializing InferenceServer:")
         print(e)
         sys.exit(1)
-    srv.add_insecure_port("[::]:{}".format(PORT))
+    srv.add_insecure_port("[::]:{}".format(args.port))
     srv.start()
-    print("AIP inference server listening on [::]:{}".format(PORT))
+    print("AIP inference server listening on [::]:{}".format(args.port))
     srv.wait_for_termination()
+
 
 
 if __name__ == "__main__":
