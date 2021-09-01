@@ -71,7 +71,7 @@ class InferenceConfiguration(api_conf_grpc.ConfigurationServiceServicer):
 
 
 class InferenceServer(api_proc_grpc.ProcessingServiceServicer):
-    def __init__(self, class_names, thread_pool, inference_model):
+    def __init__(self, thread_pool, inference_model, class_names):
         # specify your own dictionary of class ids to names here
         self.class_names = class_names
         self.thread_pool = thread_pool
@@ -156,13 +156,13 @@ def main():
     thread_pool = ThreadPoolExecutor(max_workers=args.thread)
     inference_model = InferenceModel(args.model)
 
-    srv = server(args.class_name, thread_pool, maximum_concurrent_rpcs=args.thread)
+    srv = server(thread_pool, maximum_concurrent_rpcs=args.thread)
     api_conf_grpc.add_ConfigurationServiceServicer_to_server(
         InferenceConfiguration(), srv
     )
     try:
         api_proc_grpc.add_ProcessingServiceServicer_to_server(
-            InferenceServer(thread_pool, inference_model), srv
+            InferenceServer(thread_pool, inference_model, class_names), srv
         )
     except Exception as e:
         print("Error while initializing InferenceServer:")
