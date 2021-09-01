@@ -17,6 +17,7 @@ from proto import processing_service_v2_pb2_grpc as api_proc_grpc
 import utils
 from model import InferenceModel
 
+
 def parse_class(s):
     """
     Parse a key, value pair, separated by '='
@@ -27,11 +28,12 @@ def parse_class(s):
         foo="hello world"
     """
     items = s.split('=')
-    key = items[0].strip() # we remove blanks around keys, as is logical
+    key = items[0].strip()  # we remove blanks around keys, as is logical
     if len(items) > 1:
         # rejoin the rest:
         value = '='.join(items[1:])
     return (key, value)
+
 
 def parse_classes(items):
     """
@@ -139,17 +141,18 @@ class InferenceServer(api_proc_grpc.ProcessingServiceServicer):
 
 def main():
 
-    parser = argparse.ArgumentParser(description = "Setup an inference server")
+    parser = argparse.ArgumentParser(description="Setup an inference server")
     parser.add_argument('--port', '-p', type=int, default='50051')
-    parser.add_argument('--thread', '-t',type=int, default='8')
-    parser.add_argument('--model', '-m', type=str, default='/jetson_4.3_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb')
+    parser.add_argument('--thread', '-t', type=int, default='8')
+    parser.add_argument('--model', '-m', type=str,
+                        default='/jetson_4.3_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb')
     parser.add_argument('--detect', '-d',
-        metavar="KEY=VALUE",
-        nargs='+',
-        default=["391=Tree"],
-        help="Configure the server to return detections of the given classes."
-            "Classes are identified by their openimage class number, and are given a human"
-            "readable name. e.g. '391=Tree'.")
+                        metavar="KEY=VALUE",
+                        nargs='+',
+                        default=["391=Tree"],
+                        help="Configure the server to return detections of the given classes."
+                        "Classes are identified by their openimage class number, and are given a human"
+                        "readable name. e.g. '391=Tree'.")
     args = parser.parse_args()
     class_names = parse_classes(args.detect)
 
@@ -172,7 +175,6 @@ def main():
     srv.start()
     print("AIP inference server listening on [::]:{}".format(args.port))
     srv.wait_for_termination()
-
 
 
 if __name__ == "__main__":
