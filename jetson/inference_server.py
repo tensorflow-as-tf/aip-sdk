@@ -5,6 +5,7 @@
 import sys
 import argparse
 from concurrent.futures import ThreadPoolExecutor
+from collections import defaultdict
 
 import time
 from grpc import ServicerContext, server, RpcContext
@@ -16,7 +17,6 @@ from proto import processing_service_v2_pb2_grpc as api_proc_grpc
 
 import utils
 from model import InferenceModel
-
 
 def parse_class(s):
     """
@@ -72,10 +72,16 @@ class InferenceConfiguration(api_conf_grpc.ConfigurationServiceServicer):
         )
 
 
+def default_detection():
+    return "generic detection"
+
+
 class InferenceServer(api_proc_grpc.ProcessingServiceServicer):
     def __init__(self, thread_pool, inference_model, class_names):
         # specify your own dictionary of class ids to names here
-        self.class_names = class_names
+        self.class_names = defaultdict(default_detection)
+        for key,value in class_names.items():
+            self.class_names[key] = value
         self.thread_pool = thread_pool
         self.inference_model = inference_model
 
