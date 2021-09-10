@@ -5,7 +5,6 @@
 import sys
 import argparse
 from concurrent.futures import ThreadPoolExecutor
-from collections import defaultdict
 
 import time
 from grpc import ServicerContext, server, RpcContext
@@ -17,35 +16,6 @@ from proto import processing_service_v2_pb2_grpc as api_proc_grpc
 
 import utils
 from model import InferenceModel
-
-def parse_class(s):
-    """
-    Parse a key, value pair, separated by '='
-
-    On the command line (argparse) a declaration will typically look like:
-        foo=hello
-    or
-        foo="hello world"
-    """
-    items = s.split('=')
-    key = items[0].strip()  # we remove blanks around keys, as is logical
-    if len(items) > 1:
-        # rejoin the rest:
-        value = '='.join(items[1:])
-    return (key, value)
-
-
-def parse_classes(items):
-    """
-    Parse a series of key-value pairs and return a dictionary
-    """
-    d = {}
-
-    if items:
-        for item in items:
-            key, value = parse_class(item)
-            d[key] = value
-    return d
 
 
 class InferenceConfiguration(api_conf_grpc.ConfigurationServiceServicer):
@@ -72,16 +42,13 @@ class InferenceConfiguration(api_conf_grpc.ConfigurationServiceServicer):
         )
 
 
-def default_detection():
-    return "generic detection"
+def default_detection(index):
+    return "generic detection (index : " + index + ")"
 
 
 class InferenceServer(api_proc_grpc.ProcessingServiceServicer):
     def __init__(self, thread_pool, inference_model, class_names):
-        # specify your own dictionary of class ids to names here
-        self.class_names = defaultdict(default_detection)
-        for key,value in class_names.items():
-            self.class_names[key] = value
+        self.class_names = class_names
         self.thread_pool = thread_pool
         self.inference_model = inference_model
 
@@ -160,7 +127,7 @@ def main():
                         "Classes are identified by their openimage class number, and are given a human"
                         "readable name. e.g. '391=Tree'.")
     args = parser.parse_args()
-    class_names = parse_classes(args.detect)
+    class_names = utils.parse_classes(args.detect)
 
     thread_pool = ThreadPoolExecutor(max_workers=args.thread)
     inference_model = InferenceModel(args.model)
