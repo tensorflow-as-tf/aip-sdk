@@ -118,7 +118,7 @@ def main():
     parser.add_argument('--port', '-p', type=int, default='50051')
     parser.add_argument('--thread', '-t', type=int, default='8')
     parser.add_argument('--model', '-m', type=str,
-                        default='/jetson_4.3_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb')
+                        default='/jetson_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb')
     parser.add_argument('--detect', '-d',
                         metavar="KEY=VALUE",
                         nargs='+',
