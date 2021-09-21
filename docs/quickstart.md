@@ -115,8 +115,30 @@ This will perform inference a few times on a test image and print the output pre
 
 ### 4) Run the processor on port 50051 (default)
 ```bash
-./start_jetson_container.sh -t myjetsonprocessor:1.0.0
+./start_jetson_container.sh -t 'myjetsonprocessor:1.0.0'
 ```
 
 Once it has successfully started, you can use the real AIP to send it requests. The jetson processor does not work with the orchestrator.
 
+### 5) Adding additional arguments to the processor
+ 
+The jetson processor accepts additional configuration 
+
+```bash
+-p, --port		: The port the inference server will be listening on. Defaults to 50051
+-t, --thread 	: The number of concurrent inference threads running. Defaults to 8
+-m, --model		: A path to a frozen model file to use for inference. The model file should have been
+				  copied in the `jetson4.3/` folder before the docker image was built
+				  Defaults to /jetson_4.3_processor/ssd_mobilenet_v2_oid_v4_2018_12_12_frozen_graph.pb
+-d, --detect	: A space separated list of classes to detect, mapped to their human-readable name
+				  e.g. `--detect 471=car 589=truck '785=Personal Vehicle'`.
+				  A mapping of class identifiers to names for the default model can be found online
+				  at https://storage.googleapis.com/openimages/2018_04/class-descriptions-boxable.csv
+				  Defaults to `391=Tree`
+ ```
+
+ To run the processor with additional configuration,
+
+ ```bash
+ ./start_jetson_container.sh -t 'myjetsonprocessor:1.0.0' -p 50055 -t 2 --detect 391=tree 103=vehicle 571=car
+ ```
